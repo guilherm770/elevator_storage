@@ -20,7 +20,6 @@ ENV PYTHONFAULTHANDLER=1 \
 
 RUN apt-get update    
 RUN apt-get -y install \
-        wget \
         libxft-dev \
         libffi-dev \
         libssl-dev
@@ -29,6 +28,7 @@ WORKDIR /code
 
 COPY --from=requirements-stage /tmp/requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN pip install mysqlclient
 
 COPY ./src /code/src
 
