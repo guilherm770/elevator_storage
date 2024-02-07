@@ -1,11 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 
-from src.repository import DemandRepository, ElevatorRepository, FloorRepository
+from src.repository import ElevatorRepository
 from src.routers.schemas.elevator_schema import ElevatorCreate, ElevatorResponse
-from src.routers.schemas.demand_schema import DemandCreate, DemandResponse
-from src.routers.schemas.floor_schema import FloorCreate, FloorResponse
-from src.models import Demand, Elevator, Floor
+from src.models import Elevator
 from src.database import get_db
 
 
@@ -20,20 +18,33 @@ router = APIRouter(
 def get_elevator_repository(db: Session = Depends(get_db)):
     return ElevatorRepository(db)
 
-def get_floor_repository(db: Session = Depends(get_db)):
-    return FloorRepository(db)
-
-def get_demand_repository(db: Session = Depends(get_db)):
-    return DemandRepository(db)
-
-@router.post("/elevator/", response_model=ElevatorResponse)
+@router.post("/elevator/", response_model=ElevatorResponse, status_code=200)
 def create_elevator(elevator: ElevatorCreate, repo: ElevatorRepository = Depends(get_elevator_repository)):
     elevator_model = Elevator(**elevator.dict())
     return repo.add(elevator_model)
 
-@router.get("/elevator/{elevator_id}", response_model=ElevatorResponse)
+@router.get("/elevator/{elevator_id}", response_model=ElevatorResponse, status_code=200)
 def read_elevator(elevator_id: int, repo: ElevatorRepository = Depends(get_elevator_repository)):
     elevator = repo.get(Elevator, elevator_id)
     if elevator is None:
         raise HTTPException(status_code=404, detail="Elevator not found")
     return elevator
+
+@router.put("/elevator/{elevator_id}", response_model=ElevatorResponse, status_code=200)
+def update_elevator(elevator_id: int, elevator: ElevatorCreate, repo: ElevatorRepository = Depends(get_elevator_repository)):
+    existing_elevator = repo.get(Elevator, elevator_id)
+    if existing_elevator is None:
+        raise HTTPException(status_code=404, detail="Elevator not found")
+    existing_elevator.current_floor = elevator.current_floor
+    existing_elevator.resting_floor = elevator.resting_floor
+    existing_elevator.status = elevator.status
+    return repo.add(existing_elevator)
+
+@router.delete("/elevator/{elevator_id}", status_code=204)
+def delete_elevator(elevator_id: int, repo: ElevatorRepository = Depends(get_elevator_repository)):
+    elevator = repo.get(Elevator, elevator_id)
+    if elevator is None:
+        raise HTTPException(status_code=404, detail="Elevator not found")
+    repo.db_session.delete(elevator)
+    repo.db_session.commit()
+    return None

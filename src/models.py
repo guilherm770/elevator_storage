@@ -5,9 +5,14 @@ from enum import Enum
 from src.database import Base
 
 
-class ElevatorStatusEnum(str, Enum):
+class DemandStatusEnum(str, Enum):
     PENDING = "pending"
     COMPLETED = "completed"
+
+
+class ElevatorStatusEnum(str, Enum):
+    VACANT = "vacant"
+    OCCUPIED = "occupied"
 
 
 class Elevator(Base):
@@ -21,7 +26,7 @@ class Elevator(Base):
             ElevatorStatusEnum, 
             name="elevator_status"
         ),
-        default=ElevatorStatusEnum.COMPLETED,
+        default=ElevatorStatusEnum.VACANT,
         nullable=False,
         index=True
     )
@@ -43,10 +48,10 @@ class Demand(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     status = Column(
             SQLAlchemyEnum(
-                ElevatorStatusEnum, 
+                DemandStatusEnum, 
                 name="elevator_status"
             ),
-            default=ElevatorStatusEnum.COMPLETED,
+            default=DemandStatusEnum.COMPLETED,
             nullable=False,
             index=True
         )

@@ -18,19 +18,14 @@ ENV PYTHONFAULTHANDLER=1 \
         PIP_DEFAULT_TIMEOUT=100 \
         PYTHONDONTWRITEBYTECODE=1
 
-RUN apt-get update    
-RUN apt-get -y install \
-        libxft-dev \
-        libffi-dev \
-        libssl-dev
+RUN apt-get update && \
+    apt-get -y install libxft-dev libffi-dev libssl-dev && \
+    apt-get -y install ncat && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /code
 
 COPY --from=requirements-stage /tmp/requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
-RUN pip install mysqlclient
 
-COPY ./src /code/src
-
-# colocar esse comando no compose e criar um entrypoint.sh para rodar migrações do DB (alembic)
-CMD exec uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload 
+COPY . /code/.

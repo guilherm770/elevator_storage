@@ -1,7 +1,10 @@
 from fastapi.middleware.cors import CORSMiddleware 
 from fastapi import FastAPI
 
+from .routers import demand_router
 from .routers import elevator_router
+from .routers import floor_router
+
 from .config import settings
 
 from datetime import datetime
@@ -15,9 +18,7 @@ class Formatter(logging.Formatter):
     """override logging.Formatter to use an aware datetime object"""
 
     def converter(self, timestamp):
-        # Create datetime in UTC
         dt = datetime.fromtimestamp(timestamp, tz=pytz.UTC)
-        # Change datetime's timezone
         return dt.astimezone(pytz.timezone(settings.TZ))
 
     def formatTime(self, record, datefmt=None):
@@ -66,6 +67,8 @@ def create_app(debug: bool = False) -> FastAPI:
         allow_headers=["*"],
     )
     
+    app.include_router(demand_router.router)
     app.include_router(elevator_router.router)
+    app.include_router(floor_router.router)
 
     return app

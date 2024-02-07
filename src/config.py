@@ -16,10 +16,10 @@ class TestingConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI: str = os.getenv("SQLALCHEMY_TEST_URI")
 
 class DevelopmentConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI: str = f'mysql://{os.getenv("DATABASE_USERNAME")}:{os.getenv("DATABASE_PASSWORD")}@{os.getenv("DATABASE_HOSTNAME")}:{os.getenv("DATABASE_PORT")}/{os.getenv("DATABASE_HOMOLOG")}?charset=utf8mb4'                                                   
+    SQLALCHEMY_DATABASE_URI: str = f'mysql+pymysql://{os.getenv("DATABASE_USERNAME")}:{os.getenv("DATABASE_PASSWORD")}@{os.getenv("DATABASE_HOSTNAME")}:{os.getenv("DATABASE_PORT")}/{os.getenv("DATABASE_HOMOLOG")}?charset=utf8mb4'                                                   
 
 class ProductionConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI: str = f'mysql://{os.getenv("DATABASE_USERNAME")}:{os.getenv("DATABASE_PASSWORD")}@{os.getenv("DATABASE_HOSTNAME")}:{os.getenv("DATABASE_PORT")}/{os.getenv("DATABASE_PROD")}?charset=utf8mb4'
+    SQLALCHEMY_DATABASE_URI: str = f'mysql+pymysql://{os.getenv("DATABASE_USERNAME")}:{os.getenv("DATABASE_PASSWORD")}@{os.getenv("DATABASE_HOSTNAME")}:{os.getenv("DATABASE_PORT")}/{os.getenv("DATABASE_PROD")}?charset=utf8mb4'
 
 @lru_cache()
 def get_settings():
