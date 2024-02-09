@@ -1,8 +1,14 @@
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import Column, Integer, String, DateTime, Enum
-from datetime import datetime
 from enum import Enum as PyEnum
+
+# revision identifiers, used by Alembic.
+revision = '60d3150878e8'
+down_revision = None
+branch_labels = None
+depends_on = None
+
 
 class DemandStatusEnum(str, PyEnum):
     PENDING = "pending"
