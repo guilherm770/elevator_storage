@@ -1,4 +1,5 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import ConfigDict
 from functools import lru_cache
 import os
 
@@ -9,8 +10,8 @@ load_dotenv('.env')
 class BaseConfig(BaseSettings):
     TZ: str
 
-    class Config:
-        env_file = ".env"        
+    model_config = ConfigDict(extra='forbid')
+
 
 class TestingConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI: str = os.getenv("SQLALCHEMY_TEST_URI")
